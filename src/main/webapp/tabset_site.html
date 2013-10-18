@@ -1,0 +1,73 @@
+<!doctype html>
+<html ng-app="greyangular">
+    <head>
+        <style>
+            .bigfinger { font-size: 250%; position:relative; top: 8px; }
+        </style>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.3/angular.js"></script>
+        <!-- snapshot version of angular-ui because of bug : https://github.com/angular-ui/bootstrap/issues/676 -->
+        <script src="http://ci.angularjs.org/job/angularui-bootstrap/ws/dist/ui-bootstrap-tpls-0.7.0-SNAPSHOT.js"></script>
+        <script>
+            angular.module('greyangular', ['ui.bootstrap']);
+            function MyController($scope, $http, $timeout, limitToFilter) {
+
+                $scope.activeTab = {
+                    search: true,
+                    results: false
+                };
+
+                /*insert:CriteriaController*/
+
+                /*insert:ResultsController*/
+
+                /*insert:ShowScheduleController*/
+
+                $scope.goToSearch = function() {
+                    $scope.activeTab.results = false;
+                    $scope.activeTab.search = true;
+                };
+
+                $scope.goToResults = function() {
+                    $scope.activeTab.results = true;
+                    $scope.activeTab.search = false;
+                };
+
+                $scope.doSearchAnchor = function(hashAnchor) {
+                    window.location.hash = hashAnchor;
+                };
+
+                $scope.goBackToSearchCriteria = function() {
+                    $scope.activeTab.search();
+                };
+
+            }
+        </script>
+
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//bootswatch.com/2/united/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+
+        <img width="542" height="83" src="greyangular.png"/>
+
+        <div ng-controller="MyController">
+
+            <tabset>
+                <tab heading="Search" select="goToSearch()" active="activeTab.search" >
+                    <div style="margin-left: 30px; margin-right: 30px">
+                        <!--insert:CriteriaBody-->
+                    </div>
+                </tab>
+                <tab heading="Results" select="goToResults()" disabled="searchResponsePercent != 100" active="activeTab.results" >
+                    <div style="margin-left: 30px; margin-right: 30px">
+                        <!--insert:ResultsBody-->
+                    </div>
+                </tab>
+            </tabset>
+
+        </div>
+
+
+    </body>
+</html>

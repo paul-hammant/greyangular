@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         version="2.4">
+
+  <servlet>
+    <servlet-name>GetOriginLocationsByName</servlet-name>
+    <servlet-class>com.paulhammant.greyangular.servlet.GetGreyhoundOriginLocationsByName</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>GetDestinationLocationsByName</servlet-name>
+    <servlet-class>com.paulhammant.greyangular.servlet.GetGreyhoundDestinationLocationsByName</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>Search</servlet-name>
+    <servlet-class>com.paulhammant.greyangular.servlet.Search</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>GetScheduleDetails</servlet-name>
+    <servlet-class>com.paulhammant.greyangular.servlet.GetScheduleDetails</servlet-class>
+  </servlet>
+
+  <filter>
+    <filter-name>EnsureGreyhoundSession</filter-name>
+    <filter-class>com.paulhammant.greyangular.servlet.EnsureHasAGreyhoundSessionFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>EnsureGreyhoundSession</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <servlet-mapping>
+    <servlet-name>GetOriginLocationsByName</servlet-name>
+    <url-pattern>GetOriginLocationsByName</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>Search</servlet-name>
+    <url-pattern>Search</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>GetScheduleDetails</servlet-name>
+    <url-pattern>GetScheduleDetails</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>GetDestinationLocationsByName</servlet-name>
+    <url-pattern>GetDestinationLocationsByName</url-pattern>
+  </servlet-mapping>
+
+</web-app>

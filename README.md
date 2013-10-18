@@ -1,4 +1,1 @@
-greyangular
-===========
-
-Greyangular blog entry project
+Greyangular blog entry project. Refer:

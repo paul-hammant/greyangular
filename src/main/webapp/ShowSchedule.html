@@ -1,0 +1,86 @@
+<!doctype html>
+<html ng-app="greyangular">
+    <head>
+        <style>
+            .bigfinger {
+                font-size: 250%;
+                position: relative;
+                top: 8px;
+            }
+        </style>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.3/angular.js"></script>
+        <script src="http://angular-ui.github.com/bootstrap/ui-bootstrap-tpls-0.6.0.js"></script>
+        <script>
+            angular.module('greyangular', ['ui.bootstrap']);
+            function MyController($scope, $http, $timeout) {
+
+                $scope.choice = {
+                    Key: window.location.hash
+                };
+
+                /*block:ShowScheduleController*/
+
+                $scope.showSchedule = function(choice) {
+                    var key = choice.Key.replace("#", "__HASH__");
+                    $http.jsonp("/GetScheduleDetails?callback=JSON_CALLBACK &key=" + key).then(function(response){
+                        choice.schedule = response.data;
+                    });
+                };
+
+                /*endblock:ShowScheduleController*/
+
+                $scope.showSchedule($scope.choice);
+
+            }
+        </script>
+
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    </head>
+    <body>
+
+        <alert type="'info'">Show Schedule</alert>
+
+        <div ng-controller="MyController">
+
+            <!--block:ShowScheduleBody-->
+
+            <div style="margin-left: 10%; margin-right: 10%; border: solid; border-color: grey;" data-ng-show="choice.schedule">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Arrives</th>
+                            <th>Departs</th>
+                            <th>Layover</th>
+                            <th>Carrier</th>
+                            <th>Meals/Rest Stop</th>
+                            <th>Schedule</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-ng-repeat="stop in choice.schedule">
+                            <td>{{stop.Location}}</td>
+                            <td>{{stop.Arrives}}</td>
+                            <td>{{stop.Departs}}</td>
+                            <td>{{stop.Layover}}</td>
+                            <td>{{stop.Carrier}}</td>
+                            <td>{{stop.Meal}}</td>
+                            <td>{{stop.Schedule}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!--endblock:ShowScheduleBody-->
+
+            <form><input type="button" value="back to search results" onclick="history.go(-1);return true;"></form>
+
+            <pre>
+Choice: {{ choice | json }}
+            </pre>
+
+        </div>
+
+    </body>
+</html>

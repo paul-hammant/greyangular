@@ -1,0 +1,16 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="ui">
+  <test name="standard">
+    <groups>
+      <run>
+        <include name="unit"/>
+        <include name="ui"/>
+        <include name="integration"/>
+      </run>
+    </groups>
+    <packages>
+      <package name="com.paulhammant.*"/>
+    </packages>
+  </test>
+</suite>

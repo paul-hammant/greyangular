@@ -1,0 +1,192 @@
+<!doctype html>
+<html ng-app="greyangular">
+    <head>
+        <style>
+            .bigfinger { font-size: 250%; position:relative; top: 8px; }
+        </style>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.3/angular.js"></script>
+        <script src="http://angular-ui.github.com/bootstrap/ui-bootstrap-tpls-0.6.0.js"></script>
+        <script>
+            angular.module('greyangular', ['ui.bootstrap']);
+            function MyController($scope, $http, $timeout) {
+
+                /*block:ResultsController*/
+
+                $scope.splitDate = function(input) {
+                    return input.split("<br/>")[1];
+                };
+
+                $scope.splitTime = function(input) {
+                    return input.split("<br/>")[0];
+                };
+
+                var progress_trigger = function() {
+                    if($scope.searchResponsePercent < 100) {
+                        $scope.searchResponsePercent += $scope.searchResponsePercentIncrement;
+                        if ($scope.searchResponsePercentIncrement > 1) {
+                            $scope.searchResponsePercentIncrement *= 0.8;
+                        }
+                        if($scope.searchResponsePercent < 100) {
+                            $timeout(progress_trigger, 200);
+                        }
+                    }
+                };
+
+                $scope.startSearch = function() {
+
+                    $scope.goToResults();
+
+                    $scope.selection = null;
+
+                    var params = (window.location.hash.substr(1)).split("/");
+
+                    if (params.length != 6) {
+                        $scope.goBackToSearchCriteria();
+                    }
+
+                    $scope.search = {
+                        from: params[0] + ", " + params[1],
+                        to: params[2] + ", " + params[3],
+                        when: params[4] + " " + params[5]
+                    };
+
+                    $scope.searchResponsePercent = 0;
+                    $scope.searchResponsePercentIncrement = 16;
+
+                    $scope.searchResponse = $http.jsonp("/Search?callback=JSON_CALLBACK "
+                                    + "&from=" + $scope.search.from
+                                    + "&to=" + $scope.search.to
+                                    + "&when=" + $scope.search.when)
+                            .then(function(response) {
+                                $scope.searchResponsePercent = 100;
+                                return response.data;
+                            });
+
+                    $timeout(progress_trigger, 200);
+                };
+
+                /*endblock:ResultsController*/
+
+                $scope.goToResults = function() {
+                };
+
+                $scope.showSchedule = function(choice) {
+                    window.location.href = "/ShowSchedule.html#" + choice.Key;
+                };
+
+                $scope.goBackToSearchCriteria = function() {
+                    window.location.href = "/SearchCriteria.html";
+                };
+
+                $scope.startSearch();
+
+            }
+        </script>
+
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    </head>
+    <body>
+
+        <alert type="'info'">Search Results</alert>
+
+        <div ng-controller="MyController">
+
+            <!--block:ResultsBody-->
+
+            <form name="myForm">
+                <table class="table" style="width: 100%;">
+                    <thead style="width: 100%;">
+                        <tr style="width: 100%;">
+                            <td style="width: 14%; font-weight: bold;">Departure</td>
+                            <td style="width: 14%;">Arrival</td>
+                            <td style="width: 14%;">Duration</td>
+                            <td style="width: 10%;"># Transfers</td>
+                            <td style="width: 12%;">Advanced<br/>Purchase</td>
+                            <td style="width: 12%;">Web Only<br/>Fare</td>
+                            <td style="width: 12%;">Standard<br/>Fare</td>
+                            <td style="width: 12%;">Refundable</td>
+                        </tr>
+                    </thead>
+                </table>
+
+                <table style="width: 100%;">
+                    <tr data-ng-repeat="choice in searchResponse.SchedulesDepart" style="width: 100%;">
+                        <td style="width: 100%;">
+                            <table style="width: 100%;" class="table">
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 14%;">
+                                            {{splitTime(choice.DisplayDeparts)}}
+                                            <br/> {{splitDate(choice.DisplayDeparts)}}<br/>
+                                            <a href="javascript:" data-ng-hide="choice.schedule" data-ng-click="showSchedule(choice)">show schedule</a>
+                                            <a href="javascript:" data-ng-show="choice.schedule" data-ng-click="choice.schedule = undefined">hide schedule</a>
+                                        </td>
+                                        <td style="width: 14%;">
+                                            {{splitTime(choice.DisplayArrives)}}
+                                            <br/> {{splitDate(choice.DisplayArrives)}}
+                                        </td>
+
+                                        <td style="width: 14%;">{{choice.Time}}</td>
+                                        <td style="width: 10%;">{{choice.Transfers}}</td>
+                                        <td style="width: 12%;">
+                                            <input data-ng-show="choice.Fare1.Total != null" type="radio" data-ng-checked="$parent.selection == choice.Fare1" data-ng-click="$parent.selection = choice.Fare1"/> {{choice.Fare1.Total}}
+                                        </td>
+                                        <td style="width: 12%;">
+                                            <input data-ng-show="choice.Fare2.Total != null" type="radio" data-ng-checked="$parent.selection == choice.Fare2" data-ng-click="$parent.selection = choice.Fare2"/> {{choice.Fare2.Total}}
+                                        </td>
+                                        <td style="width: 12%;">
+                                            <input data-ng-show="choice.Fare3.Total != null" type="radio" data-ng-checked="$parent.selection == choice.Fare3" data-ng-click="$parent.selection = choice.Fare3"/> {{choice.Fare3.Total}}
+                                        </td>
+                                        <td style="width: 12%;">
+                                            <input data-ng-show="choice.Fare4.Total != null" type="radio" data-ng-checked="$parent.selection == choice.Fare4" data-ng-click="$parent.selection = choice.Fare4"/> {{choice.Fare4.Total}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!--insert:ShowScheduleBody-->
+                        </td>
+                    </tr>
+                    <tr data-ng-show="searchResponse.Valid == false">
+                        <td>
+                            <center>
+                                <alert type="'error'">No Results for {{search.from}} to {{ search.to}}<br/> on the date selected.
+                                </alert>
+                            </center>
+                        </td>
+                    </tr>
+                    <tr data-ng-show="searchResponse.Valid === undefined">
+                        <td>
+                            <center>
+                                <alert type="'info'">Searching ..
+                                    <progress percent="searchResponsePercent"></progress>
+                                </alert>
+                            </center>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+
+            <!--endblock:ResultsBody-->
+
+            <form><input type="button" value="back to search criteria" onclick="history.go(-1);return true;"></form>
+
+            <pre>
+Progress: {{ searchResponsePercent | json }}
+            </pre>
+            <pre>
+Selection: {{ selection | json }}
+            </pre>
+
+            <pre>
+Search: {{ search | json }}
+            </pre>
+
+            <pre>
+searchResponse: {{ searchResponse | json }}
+            </pre>
+
+        </div>
+
+    </body>
+</html>

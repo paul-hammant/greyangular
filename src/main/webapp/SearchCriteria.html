@@ -1,0 +1,165 @@
+<!doctype html>
+<html ng-app="greyangular">
+    <head>
+        <style>
+            .bigfinger { font-size: 250%; position:relative; top: 8px; }
+        </style>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.3/angular.js"></script>
+        <script src="http://angular-ui.github.com/bootstrap/ui-bootstrap-tpls-0.6.0.js"></script>
+        <script>
+            angular.module('greyangular', ['ui.bootstrap']);
+            function MyController($scope, $http, $timeout, limitToFilter) {
+
+                /*block:CriteriaController*/
+
+                $scope.search = {
+                    destination: undefined,
+                    origin: undefined,
+                    when:  new Date()
+                };
+
+                $scope.errs = {
+                };
+
+                $scope.ui = {
+                    minDate: new Date(),
+                    dateOptions: {
+                    'year-format': "'yy'",
+                    'starting-day': 1
+                    }
+                };
+
+                $scope.origins = function(term) {
+                    return $http.jsonp("/GetOriginLocationsByName?callback=JSON_CALLBACK &term="+term).then(function(response){
+                        return limitToFilter(response.data, 15);
+                    });
+                };
+
+                $scope.destinations = function(term) {
+                    return $http.jsonp("/GetDestinationLocationsByName?callback=JSON_CALLBACK &term="+term).then(function(response){
+                        return limitToFilter(response.data, 15);
+                    });
+                };
+
+                $scope.openCal = function() {
+                    $timeout(function() {
+                        $scope.ui.calOpened = true;
+                    });
+                };
+
+                $scope.doSearch = function() {
+
+                    $scope.errs = {};
+
+                    function locnInError(vaar, name) {
+                        if (vaar === undefined || vaar == "" || vaar.Text === undefined) {
+                            return "Must enter a valid " + name;
+                        }
+                        return undefined;
+                    }
+
+                    $scope.errs.origin = locnInError($scope.search.origin, "origin");
+                    $scope.errs.destination = locnInError($scope.search.destination, "destination");
+
+                    var isErr = angular.toJson($scope.errs) != "{}";
+
+                    if (!isErr) {
+
+                        var hashAnchor = $scope.search.origin.Text.replace(", ", "/")
+                                + "/"
+                                + $scope.search.destination.Text.replace(", ", "/")
+                                + "/"
+                        + angular.toJson($scope.search.when).replace('T', '/').substring(1, 17);
+
+                        $scope.doSearchAnchor(hashAnchor);
+                        $scope.startSearch();
+
+                    }
+                };
+
+                /*endblock:CriteriaController*/
+
+                /* Page transition in test mode */
+                $scope.doSearchAnchor = function(hashAnchor) {
+                    window.location.href = "/SearchResults.html#" + hashAnchor;
+                };
+
+                $scope.startSearch = function(hashAnchor) {
+                };
+
+
+            }
+        </script>
+
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    </head>
+    <body>
+
+        <alert type="'info'">Search Criteria</alert>
+
+        <div ng-controller="MyController">
+
+            <!--block:CriteriaBody-->
+
+            <form ng-model="search" ng-submit="doSearch()" autocomplete="off">
+
+            <div id="originRow" class="form-horizontal control-group">
+                <label for="origin" class="control-label">Traveling from</label>
+
+                <div class="controls">
+                    <input id="origin" type="text" ng-model="search.origin" typeahead-editable="false" typeahead-min-length="3" typeahead="origin as origin.Text for origin in origins($viewValue)">
+                    <span style="color: red;" ng-show="errs.origin"><span class="bigfinger">&#9756;</span>&nbsp;{{errs.origin}}</span>
+                </div>
+            </div>
+            <div id="destRow" class="form-horizontal control-group">
+                <label for="dest" class="control-label">Traveling to</label>
+
+                <div class="controls">
+                    <input id="dest" type="text" ng-model="search.destination" typeahead-editable="false" typeahead-min-length="3" typeahead="destination as destination.Text for destination in destinations($viewValue)">
+                    <span style="color: red;" ng-show="errs.destination"><span class="bigfinger">&#9756;</span>&nbsp;{{errs.destination}}</span>
+                </div>
+
+            </div>
+            <div id="dateRow" class="form-horizontal control-group">
+                <label for="date" class="control-label">Date of Travel</label>
+
+                <div class="controls">
+                    <input id="date" type="text" datepicker-popup="dd MMM yyyy" ng-model="search.when" is-open="ui.calOpened" min="ui.minDate" max="'2015-06-22'" datepicker-options="ui.dateOptions" date-disabled="disabled(date, mode)" ng-required="true" show-weeks="false"/>
+                    <button class="btn" ng-click="openCal()"><i class="icon-calendar"></i></button>
+                </div>
+            </div>
+            <div id="timeRow" class="form-horizontal control-group">
+                <label for="time" class="control-label">Travel Time</label>
+
+                <div class="controls">
+                    <div id="time" ng-model="search.when" class="well well-small" style="display:inline-block;">
+                        <timepicker hour-step="1" minute-step="1" show-meridian="true"></timepicker>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="buttonRow" class="form-horizontal control-group">
+                <div class="controls">
+                    <button type="submit">Search</button>
+                </div>
+            </div>
+
+            </form>
+
+            <!--endblock:CriteriaBody-->
+
+<pre>
+Search: {{ search | json }}
+</pre>
+<pre>
+Errs: {{ errs | json }}
+</pre>
+
+            <hr/>
+
+        </div>
+
+    </body>
+</html>
