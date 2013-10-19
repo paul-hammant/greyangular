@@ -75,7 +75,7 @@ public class SearchResultsComponentTest {
     }
 
     @Test(groups = "ui")
-    public void no_search_results_shows_error() {
+    public void no_search_results_shows_suitable_error() {
 
         moco.request(by(uri("/SearchResults.html"))).response(new PageResponse("SearchResults"));
 
@@ -216,16 +216,16 @@ public class SearchResultsComponentTest {
                     }
                 });
 
-        SearchResultsComponent component = new SearchResultsComponent("http://t" + testNumber.nextTestNum() + ".dev:8080/SearchResults.html#Chicago/IL/Denver/CO/2013-09-27/08:22", webDriver, ngModel);
+        SearchResultsComponent searchResults = new SearchResultsComponent("http://t" + testNumber.nextTestNum() + ".dev:8080/SearchResults.html#Chicago/IL/Denver/CO/2013-09-27/08:22", webDriver, ngModel);
 
-        assertThat(component.getSelection(), equalTo("null"));
+        assertThat(searchResults.getSelection(), equalTo("null"));
 
-        component.tableText().shouldBe("01:30 AM\nSat, 09/28\nshow schedule 11:40 PM\nSat, 09/28 23H, 10M 1 $134.40 $176.00 $197.00");
+        searchResults.tableText().shouldBe("01:30 AM\nSat, 09/28\nshow schedule 11:40 PM\nSat, 09/28 23H, 10M 1 $134.40 $176.00 $197.00");
 
         assertThat(params.toString(),
                 equalTo("from:Chicago, IL; to:Denver, CO; when:2013-09-27 08:22"));
 
-        FluentWebElements radioButtons = component.radioButtons();
+        FluentWebElements radioButtons = searchResults.radioButtons();
 
         // only three of the four are visible.
         assertThat(radioButtons.size(), is(4));
@@ -238,11 +238,11 @@ public class SearchResultsComponentTest {
         radioButtons.get(0).click();
 
         // Selection Model changes appropriately
-        assertThat(component.getSelection(),
+        assertThat(searchResults.getSelection(),
                 equalTo("{\"Key\":\"0|MzU1NzM2ODczNTkwMTQwOTpTb2NrMgAwAE5SLFJYADQAMQAxMzQuNDAAT0w=\",\"Total\":\"$134.40\",\"Available\":true,\"Discount\":\"1\",\"Limit\":46}"));
 
         // Only one checked button, that is the first one (which we intended)
-        FluentWebElements checkedButtons = component.checkedRadioButtons();
+        FluentWebElements checkedButtons = searchResults.checkedRadioButtons();
         assertThat(checkedButtons.size(), is(1));
         checkedButtons.get(0).getAttribute("data-ng-click").shouldContain("Fare1");
 
@@ -250,12 +250,12 @@ public class SearchResultsComponentTest {
         radioButtons.get(2).click();
 
         // Selection Model changes appropriately
-        assertThat(component.getSelection(),
+        assertThat(searchResults.getSelection(),
                 equalTo("{\"Key\":\"0|MzU1NzM2ODczNTkwMTQwOTpTb2NrMgAwAE5SADIAMwAxNzYuMDAAT0w=\",\"Total\":\"$176.00\",\"Available\":true,\"Discount\":null,\"Limit\":46}"));
 
         // Still only one checked button (checking radio nature) ...
         // ... and that is the third one
-        checkedButtons = component.checkedRadioButtons();
+        checkedButtons = searchResults.checkedRadioButtons();
         assertThat(checkedButtons.size(), is(1));
         checkedButtons.get(0).getAttribute("data-ng-click").shouldContain("Fare3");
 

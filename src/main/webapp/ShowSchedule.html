@@ -45,7 +45,15 @@
 
             <!--block:ShowScheduleBody-->
 
-            <div style="margin-left: 10%; margin-right: 10%; border: solid; border-color: grey;" data-ng-show="choice.schedule">
+            <div data-ng-show="choice.schedule.Valid == false">
+                <td>
+                    <center>
+                        <alert type="'error'">No Schedule Available. Perhaps Start Your Search Again.
+                        </alert>
+                    </center>
+                </td>
+            </div>
+            <div data-ng-hide="choice.schedule.Valid == false" style="margin-left: 10%; margin-right: 10%; border: solid; border-color: grey;" data-ng-show="choice.schedule">
                 <table class="table">
                     <thead>
                         <tr>

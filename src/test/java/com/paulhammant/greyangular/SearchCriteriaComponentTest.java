@@ -114,35 +114,35 @@ public class SearchCriteriaComponentTest {
 
         moco.request(by(uri("/SearchResults.html"))).response(new PageResponse("OK"));
 
-        SearchCriteriaComponent component = new SearchCriteriaComponent("http://t" + testNumber.nextTestNum() + ".dev:8080/SearchCriteria.html", webDriver, ngModel);
+        SearchCriteriaComponent searchCriteria = new SearchCriteriaComponent("http://t" + testNumber.nextTestNum() + ".dev:8080/SearchCriteria.html", webDriver, ngModel);
 
-        component.clickSubmitButton();
+        searchCriteria.clickSubmitButton();
 
-        component.originErrText().shouldBe("☜ Must enter a valid origin");
-        component.destinationErrText().shouldBe("☜ Must enter a valid destination");
+        searchCriteria.originErrText().shouldBe("☜ Must enter a valid origin");
+        searchCriteria.destinationErrText().shouldBe("☜ Must enter a valid destination");
 
-        component.originField().click().clearField().sendKeys("qqq");
-        component.destinationField().click().clearField().sendKeys("zzz");
+        searchCriteria.originField().click().clearField().sendKeys("qqq");
+        searchCriteria.destinationField().click().clearField().sendKeys("zzz");
 
-        component.clickSubmitButton();
+        searchCriteria.clickSubmitButton();
 
-        component.originErrText().shouldBe("☜ Must enter a valid origin");
-        component.destinationErrText().shouldBe("☜ Must enter a valid destination");
+        searchCriteria.originErrText().shouldBe("☜ Must enter a valid origin");
+        searchCriteria.destinationErrText().shouldBe("☜ Must enter a valid destination");
 
-        component.originField().click().clearField().sendKeys("chic");
-        component.destinationField().click().clearField().sendKeys("new b");
+        searchCriteria.originField().click().clearField().sendKeys("chic");
+        searchCriteria.destinationField().click().clearField().sendKeys("new b");
 
-        component.clickSubmitButton();
+        searchCriteria.clickSubmitButton();
 
-        component.originErrText().shouldBe("☜ Must enter a valid origin");
-        component.destinationErrText().shouldBe("☜ Must enter a valid destination");
+        searchCriteria.originErrText().shouldBe("☜ Must enter a valid origin");
+        searchCriteria.destinationErrText().shouldBe("☜ Must enter a valid destination");
 
-        component.originField().click().clearField().sendKeys("chic");
-        component.selectFirstOriginOffered();
-        component.destinationField().click().clearField().sendKeys("new b");
-        component.selectFirstDestinationOffered();
+        searchCriteria.originField().click().clearField().sendKeys("chic");
+        searchCriteria.selectFirstOriginOffered();
+        searchCriteria.destinationField().click().clearField().sendKeys("new b");
+        searchCriteria.selectFirstDestinationOffered();
 
-        OKPage okPage = component.clickSubmitButton();
+        OKPage okPage = searchCriteria.clickSubmitButton();
 
         okPage.verifyOnPage();
 

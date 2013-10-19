@@ -33,12 +33,9 @@ public class GreyhoundServicesTest {
     public void can_get_origins_from_greyhound_dot_com() throws IOException {
         GetGreyhoundOriginLocationsByName o = new GetGreyhoundOriginLocationsByName();
 
-
-        System.out.println("lm=" + locationMap);
         String results = o.getGreyhoundLocations("Chickasha", null, locationMap);
         assertThat(results, equalTo("([{\"Text\":\"Chickasha, OK\",\"Value\":\"670494|Chickasha/OK\"}])"));
 
-        // {\"Text\":\"Chickasha, OK\",\"Value\":\"670494|Chickasha/OK\",\"Enabled\":true,\"Attributes\":{}}
         results = o.getGreyhoundLocations("ZZUUZUZUUOIDEED", null, locationMap);
         assertThat(results, equalTo("([])"));
     }
@@ -62,7 +59,6 @@ public class GreyhoundServicesTest {
         assertThat(session.trim(), not(is("")));
         assertThat(session.length(), greaterThan(8));
     }
-
 
     @Test(groups = "integration")
     public void search_on_greyhound_dot_com_with_good_criteria_should_work() throws IOException {
