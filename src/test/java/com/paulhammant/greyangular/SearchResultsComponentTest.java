@@ -85,6 +85,8 @@ public class SearchResultsComponentTest {
                 .response(new SearchContentHandler() {
                     @Override
                     protected String getContent(String from, String to, String when) {
+                        // would ordinarily do assertions here,
+                        // but are in in the wrong thread.
                         params.append("from:").append(from)
                                 .append("; to:").append(to)
                                 .append("; when:").append(when);
@@ -138,6 +140,8 @@ public class SearchResultsComponentTest {
                 .response(new SearchContentHandler(){
                     @Override
                     protected String getContent(String from, String to, String when) {
+                        // would ordinarily do assertions here,
+                        // but are in in the wrong thread.
                         params.append("from:").append(from)
                                 .append("; to:").append(to)
                                 .append("; when:").append(when);

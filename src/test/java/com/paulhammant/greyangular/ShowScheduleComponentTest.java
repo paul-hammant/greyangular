@@ -59,6 +59,8 @@ public class ShowScheduleComponentTest {
                 .response(new ScheduleContentHandler() {
                     @Override
                     protected String getContent(String key) {
+                        // would ordinarily do assertions here,
+                        // but are in in the wrong thread.
                         params.append("key:").append(key);
                         return "[{'Schedule':'999','Arrives':'xx1','Departs':'10:40 PM','ArrivesDateTime':'xx2','DepartsDateTime':'xx3','Layover':'xx4','Location':'(START) - NARNIA, TX','Carrier':'BTW','Meal':'xx5'},\n" +
                                 "{'Schedule':'999','Arrives':'11:59 PM','Departs':'11:59 PM','ArrivesDateTime':'xx6','DepartsDateTime':'xx7','Layover':'xx8','Location':'ATLANTIS, NJ','Carrier':'BTW','Meal':'xx9'}]".replace("'", "\"");
@@ -86,6 +88,8 @@ public class ShowScheduleComponentTest {
                 .response(new ScheduleContentHandler() {
                     @Override
                     protected String getContent(String key) {
+                        // would ordinarily do assertions here,
+                        // but are in in the wrong thread.
                         params.append("key:").append(key);
                         return "{ \"Valid\": false }";
                     }
