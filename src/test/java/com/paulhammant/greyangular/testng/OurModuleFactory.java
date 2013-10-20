@@ -12,16 +12,18 @@ import org.testng.ITestContext;
 
 import java.util.Arrays;
 
-public class OurModuleFactory implements IModuleFactory {
-
-    private final CglibProxyFactory cglib = new CglibProxyFactory();
+public class OurModuleFactory
+        implements IModuleFactory {
 
     private static Module module;
 
-    public Module createModule(ITestContext context, Class<?> testClass) {
+    public Module createModule(ITestContext context,
+                               Class<?> testClass) {
         if (module != null) {
             return module;
         }
+
+
         String[] groups = context.getIncludedGroups();
 
         if (groups.length == 0 || Arrays.asList(groups).contains("ui")) {
@@ -45,6 +47,8 @@ public class OurModuleFactory implements IModuleFactory {
         }
         return module;
     }
+
+    private final CglibProxyFactory cglib = new CglibProxyFactory();
 
     private void bindNullInstance(Binder binder, Class aClass) {
         binder.bind(aClass).toInstance(Null.proxy(aClass).build(cglib));

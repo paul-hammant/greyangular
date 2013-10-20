@@ -53,7 +53,7 @@ public class SearchResultsComponentTest {
     }
 
     @Test(groups = "ui")
-    public void bogus_params_force_return_to_criteria_page() {
+    public void bogus_params_forces_a_return_to_criteria_page() {
 
         moco.request(by(uri("/SearchResults.html"))).response(new PageResponse("SearchResults"));
 
@@ -64,7 +64,7 @@ public class SearchResultsComponentTest {
     }
 
     @Test(groups = "ui")
-    public void missing_params_force_return_to_criteria_page() {
+    public void missing_params_forces_a_return_to_criteria_page() {
 
         moco.request(by(uri("/SearchResults.html"))).response(new PageResponse("SearchResults"));
 
@@ -102,7 +102,7 @@ public class SearchResultsComponentTest {
     }
 
     @Test(groups = "ui")
-    public void progress_bar_before_results() throws InterruptedException {
+    public void progress_bar_appears_before_results() throws InterruptedException {
 
         moco.request(by(uri("/SearchResults.html"))).response(new PageResponse("SearchResults"));
 
@@ -128,7 +128,7 @@ public class SearchResultsComponentTest {
     }
 
     @Test(groups = "ui")
-    public void search_result_offered_and_selection_acts_as_radio_button() {
+    public void for_search_results_clicking_selection_acts_as_radio_button() {
 
         moco.request(by(uri("/SearchResults.html"))).response(new PageResponse("SearchResults"));
 
@@ -260,6 +260,5 @@ public class SearchResultsComponentTest {
         checkedButtons.get(0).getAttribute("data-ng-click").shouldContain("Fare3");
 
     }
-
 
 }

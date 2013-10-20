@@ -103,7 +103,7 @@ public class SearchCriteriaComponentTest {
     }
 
     @Test(groups = "ui")
-    public void search_button_runs_though_validations() {
+    public void clicking_search_button_runs_though_validations() {
 
         moco.request(by(uri("/SearchCriteria.html")))
                 .response(new PageResponse("SearchCriteria"));
