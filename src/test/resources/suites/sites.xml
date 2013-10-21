@@ -1,0 +1,14 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="sites">
+  <test name="standard">
+    <groups>
+      <run>
+        <include name="sites"/>
+      </run>
+    </groups>
+    <packages>
+      <package name="com.paulhammant.*"/>
+    </packages>
+  </test>
+</suite>
