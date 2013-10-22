@@ -26,7 +26,8 @@ public class OurModuleFactory
 
         String[] groups = context.getIncludedGroups();
 
-        if (groups.length == 0 || Arrays.asList(groups).contains("ui")) {
+        if (groups.length == 0 || Arrays.asList(groups).contains("ui")
+                || Arrays.asList(groups).contains("fullStack")) {
             module = new Module() {
                 public void configure(Binder binder) {
                     FirefoxDriver ffd = new FirefoxDriver();

@@ -6,7 +6,7 @@ import com.google.inject.Inject;
 import com.paulhammant.greyangular.moco.FsCachingLocationsByName;
 import com.paulhammant.greyangular.moco.LocationContentHandler;
 import com.paulhammant.greyangular.moco.PageResponse;
-import com.paulhammant.greyangular.selenium.OKPage;
+import com.paulhammant.greyangular.selenium.BaseFluentSeleniumPage;
 import com.paulhammant.greyangular.selenium.SearchCriteriaComponent;
 import com.paulhammant.greyangular.servlet.GetGreyhoundDestinationLocationsByName;
 import com.paulhammant.greyangular.servlet.GetGreyhoundOriginLocationsByName;
@@ -38,8 +38,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.openqa.selenium.By.id;
-import static org.seleniumhq.selenium.fluent.FluentBy.attribute;
-import static org.seleniumhq.selenium.fluent.FluentBy.notAttribute;
 
 @Guice(moduleFactory = OurModuleFactory.class)
 public class SearchCriteriaComponentTest {
@@ -75,27 +73,27 @@ public class SearchCriteriaComponentTest {
 
         moco.request(by(uri("/SearchCriteria.html"))).response(new PageResponse("SearchCriteria"));
 
-        SearchCriteriaComponent component = new SearchCriteriaComponent("http://t" + testNumber.nextTestNum() + ".dev:8080/SearchCriteria.html", webDriver, ngModel);
+        SearchCriteriaComponent searchCriteria = new SearchCriteriaComponent("http://t" + testNumber.nextTestNum() + ".dev:8080/SearchCriteria.html", webDriver, ngModel);
 
         ISOChronology utc = ISOChronology.getInstanceUTC();
         DateTime now = new DateTime(utc);
 
         DateTimeFormatter parser    = ISODateTimeFormat.dateTimeParser().withChronology(utc);
-        DateTime actualWhen = parser.parseDateTime(component.getDate());
+        DateTime actualWhen = parser.parseDateTime(searchCriteria.getDate());
 
         Seconds secs = Seconds.secondsBetween(now, actualWhen);
         // Given WebDriver slowness time is pretty much the same as 'now'
         assertThat(secs.getSeconds(), lessThan(10));
         assertThat(secs.getSeconds(), greaterThanOrEqualTo(-10));
 
-        component.dateField().click();
+        searchCriteria.dateField().click();
         // tomorrow
-        component.tbody().buttons(notAttribute("disabled")).get(1).click();
+        searchCriteria.tomorrow().click();
 
         // and five hours more advanced
-        component.div(id("time")).link(attribute("ng-click", "incrementHours()")).click().click().click().click().click();
+        searchCriteria.hourIncrementor().click().click().click().click().click();
 
-        actualWhen = parser.parseDateTime(component.getDate());
+        actualWhen = parser.parseDateTime(searchCriteria.getDate());
 
         Hours hours = Hours.hoursBetween(now, actualWhen);
         assertThat(hours.getHours(), anyOf(is(28), is(4)));
@@ -142,7 +140,7 @@ public class SearchCriteriaComponentTest {
         searchCriteria.destinationField().click().clearField().sendKeys("new b");
         searchCriteria.selectFirstDestinationOffered();
 
-        OKPage okPage = searchCriteria.clickSubmitButton();
+        BaseFluentSeleniumPage okPage = searchCriteria.clickSubmitButton();
 
         okPage.verifyOnPage();
 

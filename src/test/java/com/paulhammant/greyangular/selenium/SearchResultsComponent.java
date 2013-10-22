@@ -1,23 +1,34 @@
 package com.paulhammant.greyangular.selenium;
 
 import com.paulhammant.ngwebdriver.AngularModelAccessor;
+import com.paulhammant.ngwebdriver.ByAngular;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.seleniumhq.selenium.fluent.FluentWebElement;
 import org.seleniumhq.selenium.fluent.FluentWebElements;
 import org.seleniumhq.selenium.fluent.TestableString;
 
 import static org.seleniumhq.selenium.fluent.FluentBy.attribute;
+import static org.seleniumhq.selenium.fluent.Period.secs;
 
 public class SearchResultsComponent extends BaseFluentSeleniumPage {
 
     private AngularModelAccessor ngModel;
 
     private WebElement controllerElem;
+    private ByAngular byAngular;
 
     public SearchResultsComponent(String url, WebDriver webDriver, AngularModelAccessor ngModel) {
         super(webDriver, url);
         this.ngModel = ngModel;
         controllerElem = div(attribute("ng-controller", "MyController")).getWebElement();
+        byAngular = new ByAngular((JavascriptExecutor) delegate);
+    }
+
+    @Override
+    public void verifyOnPage() {
+        within(secs(2)).form(attribute("name", "srForm"));
     }
 
     public SearchResultsComponent(String url, WebDriver webDriver) {
@@ -54,5 +65,9 @@ public class SearchResultsComponent extends BaseFluentSeleniumPage {
 
     public String getPercentageJson() {
         return ngModel.retrieveAsString(controllerElem, "searchResponsePercent");
+    }
+
+    public FluentWebElement radioButtonWhenAvailable() {
+        return tr(byAngular.repeater("choice in searchResponse.SchedulesDepart")).within(secs(10)).input(attribute("type", "radio"));
     }
 }

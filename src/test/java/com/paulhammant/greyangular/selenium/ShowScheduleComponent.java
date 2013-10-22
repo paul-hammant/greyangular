@@ -19,6 +19,11 @@ public class ShowScheduleComponent extends BaseFluentSeleniumPage {
         controllerElem = div(attribute("ng-controller", "MyController")).getWebElement();
     }
 
+    @Override
+    public void verifyOnPage() {
+        tbody().tr(attribute("data-ng-repeat", "stop in choice.schedule"));
+    }
+
     public ShowScheduleComponent(String url, WebDriver webDriver) {
         super(webDriver, url);
     }

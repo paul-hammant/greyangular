@@ -8,6 +8,7 @@ import org.seleniumhq.selenium.fluent.TestableString;
 
 import static org.openqa.selenium.By.id;
 import static org.seleniumhq.selenium.fluent.FluentBy.attribute;
+import static org.seleniumhq.selenium.fluent.FluentBy.notAttribute;
 
 public class SearchCriteriaComponent extends BaseFluentSeleniumPage {
 
@@ -18,7 +19,11 @@ public class SearchCriteriaComponent extends BaseFluentSeleniumPage {
         super(webDriver, url);
         this.ngModel = ngModel;
         controllerElem = div(attribute("ng-controller", "MyController")).getWebElement();
+    }
 
+    @Override
+    public void verifyOnPage() {
+        div(id("originRow"));
     }
 
     public TestableString destinationErrText() {
@@ -50,7 +55,7 @@ public class SearchCriteriaComponent extends BaseFluentSeleniumPage {
     }
 
 
-    public OKPage clickSubmitButton() {
+    public BaseFluentSeleniumPage clickSubmitButton() {
         submitButton().click();
         return new OKPage(delegate);
     }
@@ -69,5 +74,13 @@ public class SearchCriteriaComponent extends BaseFluentSeleniumPage {
 
     public FluentWebElement dateField() {
         return input(id("date"));
+    }
+
+    public FluentWebElement tomorrow() {
+        return tbody().buttons(notAttribute("disabled")).get(1);
+    }
+
+    public FluentWebElement hourIncrementor() {
+        return div(id("time")).link(attribute("ng-click", "incrementHours()"));
     }
 }
