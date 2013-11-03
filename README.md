@@ -1,1 +1,1 @@
-Greyangular blog entry project. Refer:
+Greyangular blog entry project. Refer [http://paulhammant.com/2013/10/23/a-lower-tech-style-of-angular-for-the-enterprise](http://paulhammant.com/2013/10/23/a-lower-tech-style-of-angular-for-the-enterprise)
