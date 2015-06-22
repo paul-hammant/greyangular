@@ -50,7 +50,7 @@ public class OutgoingDoSearchContent extends AbstractHttpContent {
                 "\"PromoCode\":\"\"," +
                 "\"DiscountCode\":\"\"," +
                 "\"Card\":\"\"," +
-                "\"CardExpiration\":\"09/2013\"" +
+                "\"CardExpiration\":\"09/2018\"" +
                 "}" +
                 "}";
 

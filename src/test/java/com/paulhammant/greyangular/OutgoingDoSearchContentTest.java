@@ -35,7 +35,7 @@ public class OutgoingDoSearchContentTest {
                         "'Mode':0,'Origin':'222333|AAA/NY','Destination':'222334|BBB/IL'," +
                         "'Departs':'01 December 2013','Returns':null,'TimeDeparts':07," +
                         "'TimeReturns':null,'RT':false,'Adults':1,'Seniors':0,'Children':0," +
-                        "'PromoCode':'','DiscountCode':'','Card':'','CardExpiration':'09/2013'}}"));
+                        "'PromoCode':'','DiscountCode':'','Card':'','CardExpiration':'09/2018'}}"));
 
     }
 

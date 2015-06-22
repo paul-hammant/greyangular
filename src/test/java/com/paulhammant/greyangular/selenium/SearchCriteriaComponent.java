@@ -4,11 +4,15 @@ import com.paulhammant.ngwebdriver.AngularModelAccessor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.seleniumhq.selenium.fluent.FluentWebElement;
+import org.seleniumhq.selenium.fluent.FluentWebElements;
 import org.seleniumhq.selenium.fluent.TestableString;
 
+import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.id;
+import static org.openqa.selenium.By.xpath;
 import static org.seleniumhq.selenium.fluent.FluentBy.attribute;
 import static org.seleniumhq.selenium.fluent.FluentBy.notAttribute;
+import static org.seleniumhq.selenium.fluent.Period.secs;
 
 public class SearchCriteriaComponent extends BaseFluentSeleniumPage {
 
@@ -54,13 +58,12 @@ public class SearchCriteriaComponent extends BaseFluentSeleniumPage {
         return div(id("destRow")).li().link().click();
     }
 
-
     public BaseFluentSeleniumPage clickSubmitButton() {
         submitButton().click();
         return new OKPage(delegate);
     }
 
-    public String getDate() {
+    public String getDateTime() {
         return ngModel.retrieveJson(controllerElem, "search.when").replace("\"", "");
     }
 
@@ -76,8 +79,13 @@ public class SearchCriteriaComponent extends BaseFluentSeleniumPage {
         return input(id("date"));
     }
 
-    public FluentWebElement tomorrow() {
-        return tbody().buttons(notAttribute("disabled")).get(1);
+    public FluentWebElement calPopupButton() {
+        return div(id("dateRow")).button(attribute("ng-click", "openCal()"));
+    }
+
+    public FluentWebElement tomorrow(int today) {
+        // despite getting the button in question, Web Driver thinks it is invisible.
+        return button(xpath("//button/span[text()=\"" + (today+1)+  "\"]/..")).ifInvisibleWaitUpTo(secs(10));
     }
 
     public FluentWebElement hourIncrementor() {

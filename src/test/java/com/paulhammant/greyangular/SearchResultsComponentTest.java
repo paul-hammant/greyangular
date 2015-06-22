@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.seleniumhq.selenium.fluent.Period.secs;
 
 @Guice(moduleFactory = OurModuleFactory.class)
 public class SearchResultsComponentTest {
@@ -137,7 +138,7 @@ public class SearchResultsComponentTest {
         final StringBuilder params = new StringBuilder();
 
         moco.request(by(uri("/Search")))
-                .response(new SearchContentHandler(){
+                .response(new SearchContentHandler() {
                     @Override
                     protected String getContent(String from, String to, String when) {
                         // would ordinarily do assertions here,
@@ -224,7 +225,12 @@ public class SearchResultsComponentTest {
 
         assertThat(searchResults.getSelection(), equalTo("null"));
 
-        searchResults.tableText().shouldBe("01:30 AM\nSat, 09/28\nshow schedule 11:40 PM\nSat, 09/28 23H, 10M 1 $134.40 $176.00 $197.00");
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+        }
+
+        searchResults.tableText().within(secs(10)).shouldBe("01:30 AM\nSat, 09/28\nshow schedule 11:40 PM\nSat, 09/28 23H, 10M 1 $134.40 $176.00 $197.00");
 
         assertThat(params.toString(),
                 equalTo("from:Chicago, IL; to:Denver, CO; when:2013-09-27 08:22"));

@@ -41,8 +41,10 @@ public class Search extends AbstractJsonpServlet {
     private String getSchedule(String respContent) {
         String startStr = "FareFinder.Step2.Initialize(";
         int start = respContent.indexOf(startStr);
-        int end = respContent.indexOf("]]},");
-        return respContent.substring(start + startStr.length(), end+3);
+        int end = respContent.indexOf( "SeniorWheelchairs");
+        end = respContent.indexOf("},", end) +1;
+        String substring = respContent.substring(start + startStr.length(), end);
+        return "(" + substring + ")";
     }
 
     private String getDetail(String respContent) {

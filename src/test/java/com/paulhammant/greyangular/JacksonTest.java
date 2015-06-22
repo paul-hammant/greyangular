@@ -30,8 +30,6 @@ public class JacksonTest {
 
         Location[] hits2 = new ObjectMapper().readValue(s, Location[].class);
 
-        System.out.println();
-
     }
 
 }

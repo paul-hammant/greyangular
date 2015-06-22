@@ -5,11 +5,12 @@
             .bigfinger { font-size: 250%; position:relative; top: 8px; }
         </style>
 
-        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.3/angular.js"></script>
-        <script src="http://angular-ui.github.com/bootstrap/ui-bootstrap-tpls-0.6.0.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.js"></script>
+        <script src="http://angular-ui.github.com/bootstrap/ui-bootstrap-tpls-0.13.0.js"></script>
         <script>
-            angular.module('greyangular', ['ui.bootstrap']);
-            function MyController($scope, $http, $timeout) {
+            var myApp = angular.module('greyangular', ['ui.bootstrap']);
+
+            myApp.controller('MyController', ['$scope', '$http', '$timeout', function($scope, $http, $timeout) {
 
                 /*block:ResultsController*/
 
@@ -54,13 +55,13 @@
                     $scope.searchResponsePercent = 0;
                     $scope.searchResponsePercentIncrement = 16;
 
-                    $scope.searchResponse = $http.jsonp("/Search?callback=JSON_CALLBACK "
+                    $http.jsonp("/Search?callback=JSON_CALLBACK "
                                     + "&from=" + $scope.search.from
                                     + "&to=" + $scope.search.to
                                     + "&when=" + $scope.search.when)
                             .then(function(response) {
                                 $scope.searchResponsePercent = 100;
-                                return response.data;
+                                $scope.searchResponse = response.data
                             });
 
                     $timeout(progress_trigger, 200);
@@ -81,7 +82,8 @@
 
                 $scope.startSearch();
 
-            }
+            }]);
+
         </script>
 
         <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">

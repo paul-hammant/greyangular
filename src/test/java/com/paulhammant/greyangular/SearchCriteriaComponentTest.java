@@ -13,9 +13,10 @@ import com.paulhammant.greyangular.servlet.GetGreyhoundOriginLocationsByName;
 import com.paulhammant.greyangular.testng.OurModuleFactory;
 import com.paulhammant.greyangular.testng.TestNumber;
 import com.paulhammant.ngwebdriver.AngularModelAccessor;
+import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
-import org.joda.time.Seconds;
+import org.joda.time.Minutes;
 import org.joda.time.chrono.ISOChronology;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -35,8 +36,7 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
-import static org.hamcrest.number.OrderingComparison.lessThan;
+import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.By.id;
 
 @Guice(moduleFactory = OurModuleFactory.class)
@@ -68,36 +68,43 @@ public class SearchCriteriaComponentTest {
         mocoHttpServer.stop();
     }
 
-    @Test(groups = "ui")
-    public void date_and_time_interaction_changes_search_model() {
+    @Test(groups = "ui", enabled = false)
+    public void datepicker_interaction_changes_search_model() {
 
         moco.request(by(uri("/SearchCriteria.html"))).response(new PageResponse("SearchCriteria"));
-
         SearchCriteriaComponent searchCriteria = new SearchCriteriaComponent("http://t" + testNumber.nextTestNum() + ".dev:8080/SearchCriteria.html", webDriver, ngModel);
-
         ISOChronology utc = ISOChronology.getInstanceUTC();
-        DateTime now = new DateTime(utc);
+        DateTimeFormatter isoDateTimeParser = ISODateTimeFormat.dateTimeParser().withChronology(utc);
+        DateTime startDateTime = isoDateTimeParser.parseDateTime(searchCriteria.getDateTime());
 
-        DateTimeFormatter parser    = ISODateTimeFormat.dateTimeParser().withChronology(utc);
-        DateTime actualWhen = parser.parseDateTime(searchCriteria.getDate());
+        searchCriteria.calPopupButton().click();
+        searchCriteria.tomorrow(startDateTime.dayOfMonth().get()).click();
 
-        Seconds secs = Seconds.secondsBetween(now, actualWhen);
-        // Given WebDriver slowness time is pretty much the same as 'now'
-        assertThat(secs.getSeconds(), lessThan(10));
-        assertThat(secs.getSeconds(), greaterThanOrEqualTo(-10));
+        DateTime changedDateTime = isoDateTimeParser.parseDateTime(searchCriteria.getDateTime());
 
-        searchCriteria.dateField().click();
-        // tomorrow
-        searchCriteria.tomorrow().click();
+        assertThat(Hours.hoursBetween(startDateTime, changedDateTime).getHours(), anyOf(is(23), is(24)));
 
-        // and five hours more advanced
-        searchCriteria.hourIncrementor().click().click().click().click().click();
+    }
 
-        actualWhen = parser.parseDateTime(searchCriteria.getDate());
+    @Test(groups = "ui")
+    public void time_interaction_changes_search_model() {
 
-        Hours hours = Hours.hoursBetween(now, actualWhen);
-        assertThat(hours.getHours(), anyOf(is(28), is(4)));
+        moco.request(by(uri("/SearchCriteria.html"))).response(new PageResponse("SearchCriteria"));
+        SearchCriteriaComponent searchCriteria = new SearchCriteriaComponent("http://t" + testNumber.nextTestNum() + ".dev:8080/SearchCriteria.html", webDriver, ngModel);
+        ISOChronology utc = ISOChronology.getInstanceUTC();
+        DateTimeFormatter isoDateTimeParser = ISODateTimeFormat.dateTimeParser().withChronology(utc);
+        DateTime startDateTime = isoDateTimeParser.parseDateTime(searchCriteria.getDateTime());
 
+        searchCriteria.calPopupButton().click();
+        searchCriteria.hourIncrementor().click().click(); // two hours
+
+        DateTime changedDateTime = isoDateTimeParser.parseDateTime(searchCriteria.getDateTime());
+        assertThat(Minutes.minutesBetween(startDateTime, changedDateTime).getMinutes(), between(119, 120));
+
+    }
+
+    private Matcher<Integer> between(int from, int to) {
+        return is(both(greaterThanOrEqualTo(from)).and(lessThanOrEqualTo(to)));
     }
 
     @Test(groups = "ui")

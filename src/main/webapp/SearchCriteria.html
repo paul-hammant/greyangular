@@ -5,18 +5,19 @@
             .bigfinger { font-size: 250%; position:relative; top: 8px; }
         </style>
 
-        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.3/angular.js"></script>
-        <script src="http://angular-ui.github.com/bootstrap/ui-bootstrap-tpls-0.6.0.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.js"></script>
+        <script src="http://angular-ui.github.com/bootstrap/ui-bootstrap-tpls-0.13.0.js"></script>
         <script>
-            angular.module('greyangular', ['ui.bootstrap']);
-            function MyController($scope, $http, $timeout, limitToFilter) {
+            var myApp = angular.module('greyangular', ['ui.bootstrap']);
+
+            myApp.controller('MyController', ['$scope', '$http', '$timeout', 'limitToFilter', function($scope, $http, $timeout, limitToFilter) {
 
                 /*block:CriteriaController*/
 
                 $scope.search = {
                     destination: undefined,
                     origin: undefined,
-                    when:  new Date()
+                    when: new Date()
                 };
 
                 $scope.errs = {
@@ -25,19 +26,22 @@
                 $scope.ui = {
                     minDate: new Date(),
                     dateOptions: {
-                    'year-format': "'yy'",
-                    'starting-day': 1
-                    }
+                        'year-format': "'yy'",
+                        'starting-day': 1
+                    },
+                    calOpened: false
                 };
 
                 $scope.origins = function(term) {
-                    return $http.jsonp("/GetOriginLocationsByName?callback=JSON_CALLBACK &term="+term).then(function(response){
+                    return $http.jsonp("/GetOriginLocationsByName?callback=JSON_CALLBACK &term=" + term)
+                    .then(function(response){
                         return limitToFilter(response.data, 15);
                     });
                 };
 
                 $scope.destinations = function(term) {
-                    return $http.jsonp("/GetDestinationLocationsByName?callback=JSON_CALLBACK &term="+term).then(function(response){
+                    return $http.jsonp("/GetDestinationLocationsByName?callback=JSON_CALLBACK &term=" + term)
+                    .then(function(response){
                         return limitToFilter(response.data, 15);
                     });
                 };
@@ -85,11 +89,12 @@
                     window.location.href = "/SearchResults.html#" + hashAnchor;
                 };
 
+                /* Stub for testing, never reached */
                 $scope.startSearch = function(hashAnchor) {
                 };
 
+            }]);
 
-            }
         </script>
 
         <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
@@ -102,7 +107,7 @@
 
             <!--block:CriteriaBody-->
 
-            <form ng-model="search" ng-submit="doSearch()" autocomplete="off">
+            <!--<form ng-model="search" ng-submit="doSearch()" autocomplete="off">-->
 
             <div id="originRow" class="form-horizontal control-group">
                 <label for="origin" class="control-label">Traveling from</label>
@@ -142,11 +147,11 @@
 
             <div id="buttonRow" class="form-horizontal control-group">
                 <div class="controls">
-                    <button type="submit">Search</button>
+                    <button data-ng-click="doSearch()" type="submit">Search</button>
                 </div>
             </div>
 
-            </form>
+            <!--</form>-->
 
             <!--endblock:CriteriaBody-->
 

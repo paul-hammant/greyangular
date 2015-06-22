@@ -1,9 +1,6 @@
 package com.paulhammant.greyangular.servlet;
 
-import com.google.api.client.http.AbstractHttpContent;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpHeaders;
-import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.paulhammant.greyangular.Constants;
 import com.paulhammant.greyangular.StringResponse;
@@ -23,12 +20,17 @@ public abstract class AbstractJsonpServlet extends HttpServlet {
         resp.setContentType("text/plain");
         resp.getOutputStream().write((callback + " ").getBytes());
         resp.getOutputStream().write(("(" + result + ")").getBytes());
+        System.err.println(">> " + callback + " <> " + result);
     }
 
-    protected HttpRequest postRequest(GenericUrl url, AbstractHttpContent content, Object ghSessionId) throws IOException {
-        return addHeaders(new NetHttpTransport()
-                .createRequestFactory(new StringResponse())
-                .buildPostRequest(url, content), ghSessionId);
+    protected HttpRequest postRequest(GenericUrl url, AbstractHttpContent content, Object ghSessionId) {
+        HttpRequestFactory requestFactory = new NetHttpTransport()
+                .createRequestFactory(new StringResponse());
+        try {
+            return addHeaders(requestFactory.buildPostRequest(url, content), ghSessionId);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected HttpRequest getRequest(GenericUrl url, Object ghSessionId) throws IOException {

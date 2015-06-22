@@ -57,7 +57,6 @@ public class HappyPathTest {
         searchCriteria.selectFirstDestinationOffered();
 
         searchCriteria.dateField().click();
-        searchCriteria.tomorrow().click();
 
         SearchResultsComponent searchResults = (SearchResultsComponent) searchCriteria.clickSubmitButton();
 

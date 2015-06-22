@@ -37,8 +37,13 @@ public class LocationMap {
 
     }
 
-    public void consumeIfNeeded(String locationsString) throws IOException {
-        Location[] locns = new ObjectMapper().readValue(locationsString, Location[].class);
+    public void consumeIfNeeded(String locationsString) {
+        Location[] locns = new Location[0];
+        try {
+            locns = new ObjectMapper().readValue(locationsString, Location[].class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         for (Location locn : locns) {
             if (!locationMap.containsKey(locn.text)) {
                 locationMap.put(locn.text, locn.value);

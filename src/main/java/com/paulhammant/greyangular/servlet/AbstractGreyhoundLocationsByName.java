@@ -22,16 +22,21 @@ public abstract class AbstractGreyhoundLocationsByName extends AbstractJsonpServ
                         LocationMap.getOrMakeMap(req)));
     }
 
-    public String getGreyhoundLocations(String term, Object ghSessionId, LocationMap locationMap) throws IOException {
-            String json = makeGreyhoundLocationPostRequest(term, ghSessionId)
-                    .execute().parseAs(String.class);
-            json = json.replace(",\"Enabled\":true,\"Attributes\":{}", "");
-            String locationsString = json.substring(json.indexOf("["), json.indexOf("]") + 1);
-            locationMap.consumeIfNeeded(locationsString);
-            return "(" + locationsString + ")";
+    public String getGreyhoundLocations(String term, Object ghSessionId, LocationMap locationMap)  {
+        HttpRequest httpRequest = makeGreyhoundLocationPostRequest(term, ghSessionId);
+        String json = null;
+        try {
+            json = httpRequest.execute().parseAs(String.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        json = json.replace(",\"Enabled\":true,\"Attributes\":{}", "");
+        String locationsString = json.substring(json.indexOf("["), json.indexOf("]") + 1);
+        locationMap.consumeIfNeeded(locationsString);
+        return "(" + locationsString + ")";
     }
 
-    private HttpRequest makeGreyhoundLocationPostRequest(final String term, Object ghSessionId) throws IOException {
+    private HttpRequest makeGreyhoundLocationPostRequest(final String term, Object ghSessionId)  {
         return postRequest(url("/services/locations.asmx/" + getGreyhoundServiceName()),
                 new OutgoingLocationContent(term), ghSessionId);
     }

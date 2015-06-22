@@ -1,6 +1,7 @@
 package com.paulhammant.greyangular.moco;
 
 import com.github.dreamhead.moco.MocoConfig;
+import com.github.dreamhead.moco.Request;
 import com.github.dreamhead.moco.ResponseHandler;
 import com.github.dreamhead.moco.extractor.ParamRequestExtractor;
 import com.github.dreamhead.moco.handler.AbstractContentResponseHandler;
@@ -8,7 +9,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 
 public abstract class GreyAbstractContentResponseHandler extends AbstractContentResponseHandler {
 
-    protected String getParam(FullHttpRequest request, String param) {
+    protected String getParam(Request request, String param) {
         ParamRequestExtractor paramRequestExtractor = new ParamRequestExtractor(param);
         return paramRequestExtractor.extract(request).get();
     }

@@ -1,8 +1,11 @@
 package com.paulhammant.greyangular.moco;
 
+import com.github.dreamhead.moco.HttpRequest;
 import com.github.dreamhead.moco.MocoConfig;
+import com.github.dreamhead.moco.Request;
 import com.github.dreamhead.moco.ResponseHandler;
 import com.github.dreamhead.moco.handler.AbstractContentResponseHandler;
+import com.github.dreamhead.moco.model.MessageContent;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;
 import org.apache.commons.io.FileUtils;
@@ -19,12 +22,18 @@ public class PageResponse extends AbstractContentResponseHandler {
         this.page = page;
     }
 
-    protected void writeContentResponse(FullHttpRequest fullHttpRequest, ByteBuf byteBuf) {
+    @Override
+    protected String getContentType(HttpRequest request) {
+        return "text/html";
+    }
+
+    @Override
+    protected MessageContent responseContent(Request request) {
+        File file = new File(pagePath, page + ".html");
         try {
-            File file = new File(pagePath, page + ".html");
-            byteBuf.writeBytes(FileUtils.readFileToByteArray(file));
+            return MessageContent.content(FileUtils.readFileToString(file));
         } catch (IOException e) {
-            byteBuf.writeBytes(("file " + pagePath + page + ".html not found").getBytes());
+            return MessageContent.content("file " + pagePath + page + ".html not found");
         }
     }
 

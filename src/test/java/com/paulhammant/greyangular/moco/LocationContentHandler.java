@@ -1,5 +1,7 @@
 package com.paulhammant.greyangular.moco;
 
+import com.github.dreamhead.moco.Request;
+import com.github.dreamhead.moco.model.MessageContent;
 import com.paulhammant.greyangular.LocationMap;
 import com.paulhammant.greyangular.LocationsByName;
 import io.netty.buffer.ByteBuf;
@@ -18,15 +20,8 @@ public class LocationContentHandler extends GreyAbstractContentResponseHandler {
     }
 
     @Override
-    protected void writeContentResponse(FullHttpRequest request, ByteBuf buffer) {
-        buffer.writeBytes((getParam(request, "callback") + " ").getBytes());
-        String term = null;
-        try {
-            term = locationsByName.getGreyhoundLocations(getParam(request, "term"), null, locationMap);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        buffer.writeBytes(term.getBytes());
+    protected MessageContent responseContent(Request request) {
+        return MessageContent.content(getParam(request, "callback") + " " + locationsByName.getGreyhoundLocations(getParam(request, "term"), null, locationMap));
     }
 
 }
