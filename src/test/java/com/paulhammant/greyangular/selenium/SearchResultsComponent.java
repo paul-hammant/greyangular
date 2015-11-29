@@ -17,13 +17,11 @@ public class SearchResultsComponent extends BaseFluentSeleniumPage {
     private AngularModelAccessor ngModel;
 
     private WebElement controllerElem;
-    private ByAngular byAngular;
 
     public SearchResultsComponent(String url, WebDriver webDriver, AngularModelAccessor ngModel) {
         super(webDriver, url);
         this.ngModel = ngModel;
         controllerElem = div(attribute("ng-controller", "MyController")).getWebElement();
-        byAngular = new ByAngular((JavascriptExecutor) delegate);
     }
 
     @Override
@@ -68,6 +66,6 @@ public class SearchResultsComponent extends BaseFluentSeleniumPage {
     }
 
     public FluentWebElement radioButtonWhenAvailable() {
-        return tr(byAngular.repeater("choice in searchResponse.SchedulesDepart")).within(secs(10)).input(attribute("type", "radio"));
+        return tr(ByAngular.repeater("choice in searchResponse.SchedulesDepart")).within(secs(10)).input(attribute("type", "radio"));
     }
 }
